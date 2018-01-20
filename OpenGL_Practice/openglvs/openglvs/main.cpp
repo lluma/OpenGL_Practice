@@ -7,7 +7,15 @@
 // GLFW
 #include <GLFW/glfw3.h>
 
+// Other Libs
+
+// Soil2
 #include "SOIL2/SOIL2.h"
+
+// GLM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.h"
 
@@ -138,11 +146,18 @@ int main()
 		// (Add) Tutorial 1 Drawing a triangle
 		ourShader.Use();
 
+		glm::mat4 transform(1); // New version glm for 0.9.9..up
+		transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+		transform = glm::rotate(transform, (GLfloat)glfwGetTime( ) * -1.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+
+		GLint transformLocation = glGetUniformLocation(ourShader.Program, "transform");
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(transform));
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture"), 0);
 
-
+		// Draw Container
 		glBindVertexArray(VAO);
 		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
